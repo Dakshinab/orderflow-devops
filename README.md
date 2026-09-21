@@ -38,7 +38,7 @@ observability.
 ## Progress log
 
 - [x] Phase 0 - Repo structure and planning
-- [ ] Phase 1 - Terraform networking (VPC, subnets, security groups)
+- [x] Phase 1 - Terraform networking (VPC, subnets, security groups) - Instance: i-095b0e26088081af4
 - [ ] Phase 2 - EC2 + k3s cluster provisioning
 - [ ] Phase 3 - Application (Spring Boot + Postgres + SQS worker)
 - [ ] Phase 4 - CI/CD pipeline (staging -> approval -> prod)
