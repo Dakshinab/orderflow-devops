@@ -17,7 +17,7 @@ module "network" {
 
 resource "aws_instance" "app" {
   ami                    = "ami-0f918f7e67a3323f0"
-  instance_type          = "t3.micro"
+  instance_type          = "t3.small"
   subnet_id              = module.network.public_subnet_id
   vpc_security_group_ids = [module.network.security_group_id]
   key_name                = "orderflow-key"

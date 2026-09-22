@@ -39,7 +39,7 @@ observability.
 
 - [x] Phase 0 - Repo structure and planning
 - [x] Phase 1 - Terraform networking (VPC, subnets, security groups) - Instance: i-095b0e26088081af4
-- [ ] Phase 2 - EC2 + k3s cluster provisioning
+- [x] Phase 2 - EC2 + k3s cluster provisioning (resized t3.micro to t3.small due to memory constraints)
 - [ ] Phase 3 - Application (Spring Boot + Postgres + SQS worker)
 - [ ] Phase 4 - CI/CD pipeline (staging -> approval -> prod)
 - [ ] Phase 5 - Secrets management (SSM Parameter Store)
