@@ -15,7 +15,7 @@ observability.
 
 ## Architecture (high level)
 
-*(diagram to be added once infrastructure is built)*
+![OrderFlow Architecture](docs/architecture-diagram.svg)
 
 - Single EC2 instance running k3s, with staging and production as separate namespaces
 - Postgres self-hosted in-cluster (not RDS — see Cost Decisions below)
