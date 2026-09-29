@@ -10,3 +10,9 @@
 
 # OS files
 .DS_Store
+
+# Java build output
+target/
+
+# Windows metadata
+*:Zone.Identifier
