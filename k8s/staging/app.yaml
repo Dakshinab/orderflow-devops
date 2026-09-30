@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderflow-api
+  namespace: staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orderflow-api
+  template:
+    metadata:
+      labels:
+        app: orderflow-api
+    spec:
+      containers:
+        - name: orderflow-api
+          image: orderflow-api:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/orderflow
+            - name: SPRING_DATASOURCE_USERNAME
+              value: orderflow_user
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: changeme
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderflow-api-service
+  namespace: staging
+spec:
+  selector:
+    app: orderflow-api
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: NodePort
