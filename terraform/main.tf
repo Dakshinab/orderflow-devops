@@ -65,6 +65,11 @@ resource "aws_instance" "app" {
   key_name               = "orderflow-key"
   iam_instance_profile   = aws_iam_instance_profile.app_profile.name
 
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp3"
+  }
+
   tags = {
     Name = "orderflow-server"
   }
