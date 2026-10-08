@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: orderflow-api
-          image: orderflow-api:latest
-          imagePullPolicy: Never
+          image: 223767250051.dkr.ecr.ap-south-1.amazonaws.com/orderflow-api:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

@@ -52,6 +52,32 @@ resource "aws_iam_role_policy" "sqs_access" {
   })
 }
 
+resource "aws_iam_role_policy" "ecr_pull" {
+  name = "orderflow-ecr-pull-policy"
+  role = aws_iam_role.app_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer"
+        ]
+        Resource = aws_ecr_repository.app.arn
+      }
+    ]
+  })
+}
+
 resource "aws_iam_instance_profile" "app_profile" {
   name = "orderflow-app-profile"
   role = aws_iam_role.app_role.name
