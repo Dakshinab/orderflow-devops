@@ -78,6 +78,25 @@ resource "aws_iam_role_policy" "ecr_pull" {
   })
 }
 
+resource "aws_iam_role_policy" "ssm_read" {
+  name = "orderflow-ssm-read-policy"
+  role = aws_iam_role.app_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameter",
+          "ssm:GetParameters"
+        ]
+        Resource = "arn:aws:ssm:ap-south-1:223767250051:parameter/orderflow/*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_instance_profile" "app_profile" {
   name = "orderflow-app-profile"
   role = aws_iam_role.app_role.name

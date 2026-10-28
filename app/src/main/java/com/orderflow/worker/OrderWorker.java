@@ -11,7 +11,7 @@ import java.util.List;
 public class OrderWorker {
 
     private final SqsClient sqsClient = SqsClient.builder().build();
-    private final String queueUrl = "https://sqs.ap-south-1.amazonaws.com/223767250051/orderflow-order-queue";
+    private final String queueUrl = System.getenv("SQS_QUEUE_URL");
 
     @Scheduled(fixedDelay = 5000)
     public void pollQueue() {
