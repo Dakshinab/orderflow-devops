@@ -42,7 +42,7 @@ observability.
 - [x] Phase 2 - EC2 + k3s cluster provisioning (resized t3.micro to t3.small due to memory constraints)
 - [x] Phase 3 - Application (Spring Boot + Postgres + SQS worker)
 - [x] Phase 4 - CI/CD pipeline (staging -> approval -> prod)
-- [ ] Phase 5 - Secrets management (SSM Parameter Store)
+- [x] Phase 5 - Secrets management (SSM Parameter Store)
 - [ ] Phase 6 - Observability (Prometheus + Grafana)
 - [ ] Phase 7 - Cost controls (budget alert, auto-shutdown)
 - [ ] Phase 8 - Final polish (diagram, evidence, LinkedIn post)
