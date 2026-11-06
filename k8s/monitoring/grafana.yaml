@@ -13,6 +13,78 @@ data:
         url: http://prometheus.monitoring.svc.cluster.local:9090
         isDefault: true
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-provider
+  namespace: monitoring
+data:
+  provider.yaml: |
+    apiVersion: 1
+    providers:
+      - name: orderflow
+        folder: OrderFlow
+        type: file
+        disableDeletion: false
+        allowUiUpdates: true
+        options:
+          path: /var/lib/grafana-dashboards
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  orderflow-overview.json: |
+    {
+      "title": "OrderFlow Overview",
+      "uid": "orderflow-overview",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "30s",
+      "time": { "from": "now-1h", "to": "now" },
+      "panels": [
+        {
+          "id": 1, "type": "stat", "title": "App status",
+          "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+          "targets": [ { "expr": "up{job=\"orderflow-api\"}", "refId": "A" } ],
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [ { "type": "value", "options": {
+                "0": { "text": "DOWN", "color": "red" },
+                "1": { "text": "UP", "color": "green" } } } ]
+            },
+            "overrides": []
+          }
+        },
+        {
+          "id": 2, "type": "timeseries", "title": "App heap memory",
+          "gridPos": { "h": 6, "w": 9, "x": 6, "y": 0 },
+          "targets": [ { "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})", "refId": "A" } ],
+          "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] }
+        },
+        {
+          "id": 3, "type": "timeseries", "title": "App CPU use",
+          "gridPos": { "h": 6, "w": 9, "x": 15, "y": 0 },
+          "targets": [ { "expr": "process_cpu_usage{job=\"orderflow-api\"}", "refId": "A" } ],
+          "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] }
+        },
+        {
+          "id": 4, "type": "timeseries", "title": "Requests per second",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_count[2m]))", "refId": "A" } ],
+          "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
+        },
+        {
+          "id": 5, "type": "timeseries", "title": "Average response time",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_sum[2m])) / sum(rate(http_server_requests_seconds_count[2m]))", "refId": "A" } ],
+          "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+        }
+      ]
+    }
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -53,12 +125,22 @@ spec:
           volumeMounts:
             - name: datasources
               mountPath: /etc/grafana/provisioning/datasources
+            - name: dashboard-provider
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: dashboards
+              mountPath: /var/lib/grafana-dashboards
             - name: data
               mountPath: /var/lib/grafana
       volumes:
         - name: datasources
           configMap:
             name: grafana-datasources
+        - name: dashboard-provider
+          configMap:
+            name: grafana-dashboard-provider
+        - name: dashboards
+          configMap:
+            name: grafana-dashboards
         - name: data
           emptyDir: {}
 ---
