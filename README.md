@@ -51,3 +51,9 @@ observability.
 
 Spring Boot, PostgreSQL, AWS (EC2, VPC, SQS, SSM, S3, DynamoDB), Terraform,
 Kubernetes (k3s), GitHub Actions, Docker, Prometheus, Grafana
+
+## Monitoring
+
+Prometheus scrapes the app's metrics and Grafana shows them on an OrderFlow dashboard that is loaded from a file in this repo, so it comes back after every restart.
+
+![OrderFlow Grafana dashboard](docs/grafana-dashboard.png)
