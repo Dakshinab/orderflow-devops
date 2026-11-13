@@ -41,13 +41,13 @@ data:
       "title": "OrderFlow Overview",
       "uid": "orderflow-overview",
       "schemaVersion": 39,
-      "version": 2,
+      "version": 3,
       "refresh": "30s",
       "time": { "from": "now-1h", "to": "now" },
       "panels": [
         {
           "id": 1, "type": "stat", "title": "App status",
-          "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+          "gridPos": { "h": 6, "w": 4, "x": 0, "y": 0 },
           "targets": [ { "expr": "up{job=\"orderflow-api\"}", "refId": "A" } ],
           "fieldConfig": {
             "defaults": {
@@ -59,27 +59,41 @@ data:
           }
         },
         {
+          "id": 9, "type": "stat", "title": "Firing alerts",
+          "gridPos": { "h": 6, "w": 4, "x": 4, "y": 0 },
+          "targets": [ { "expr": "count(ALERTS{alertstate=\"firing\"}) or vector(0)", "refId": "A" } ],
+          "options": { "colorMode": "background" },
+          "fieldConfig": {
+            "defaults": {
+              "thresholds": { "mode": "absolute", "steps": [
+                { "color": "green", "value": null },
+                { "color": "red", "value": 1 } ] }
+            },
+            "overrides": []
+          }
+        },
+        {
           "id": 2, "type": "timeseries", "title": "App heap memory",
-          "gridPos": { "h": 6, "w": 9, "x": 6, "y": 0 },
+          "gridPos": { "h": 6, "w": 8, "x": 8, "y": 0 },
           "targets": [ { "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})", "refId": "A" } ],
           "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] }
         },
         {
           "id": 3, "type": "timeseries", "title": "App CPU use",
-          "gridPos": { "h": 6, "w": 9, "x": 15, "y": 0 },
+          "gridPos": { "h": 6, "w": 8, "x": 16, "y": 0 },
           "targets": [ { "expr": "process_cpu_usage{job=\"orderflow-api\"}", "refId": "A" } ],
           "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] }
         },
         {
-          "id": 4, "type": "timeseries", "title": "Requests per second",
+          "id": 4, "type": "timeseries", "title": "Order requests per second",
           "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
-          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_count[2m]))", "refId": "A" } ],
+          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_count{uri!~\"/actuator.*\"}[2m])) or vector(0)", "refId": "A" } ],
           "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
         },
         {
-          "id": 5, "type": "timeseries", "title": "Average response time",
+          "id": 5, "type": "timeseries", "title": "Average response time (orders)",
           "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
-          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_sum[2m])) / sum(rate(http_server_requests_seconds_count[2m]))", "refId": "A" } ],
+          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_sum{uri!~\"/actuator.*\"}[2m])) / sum(rate(http_server_requests_seconds_count{uri!~\"/actuator.*\"}[2m]))", "refId": "A" } ],
           "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
         },
         {

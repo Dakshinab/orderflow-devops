@@ -12,6 +12,8 @@ data:
   prometheus.yml: |
     global:
       scrape_interval: 30s
+    rule_files:
+      - /etc/prometheus/rules.yml
     scrape_configs:
       - job_name: prometheus
         static_configs:
@@ -23,6 +25,31 @@ data:
       - job_name: node
         static_configs:
           - targets: ["node-exporter.monitoring.svc.cluster.local:9100"]
+  rules.yml: |
+    groups:
+      - name: orderflow-alerts
+        rules:
+          - alert: AppDown
+            expr: up{job="orderflow-api"} == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "OrderFlow app is down"
+          - alert: ServerMemoryLow
+            expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.10
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Server has less than 10% memory free"
+          - alert: ServerDiskHigh
+            expr: 100 - (node_filesystem_avail_bytes{mountpoint="/",fstype="ext4"} / node_filesystem_size_bytes{mountpoint="/",fstype="ext4"} * 100) > 85
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Server disk is more than 85% full"
 ---
 apiVersion: apps/v1
 kind: Deployment

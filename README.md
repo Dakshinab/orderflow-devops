@@ -25,13 +25,13 @@ Built so far:
 - Terraform with a reusable network module
 - GitHub Actions builds the Docker image and pushes it to ECR using OIDC (no stored AWS keys)
 - Secrets in AWS SSM Parameter Store, loaded into Kubernetes Secrets/ConfigMaps
-- Prometheus + Grafana, with the dashboard stored as a file in this repo
+- Prometheus, Grafana and node-exporter, with the dashboard and alert rules stored as files in this repo
 
 Planned:
 
 - Terraform remote state (S3 + DynamoDB locking)
 - Automatic deploys, an approval gate, and a production namespace
-- Server-level metrics and alerting
+- Alert notifications (email or Slack)
 - Budget alert and auto-shutdown
 
 ## Cost decisions (and why)
@@ -51,15 +51,21 @@ Planned:
 - [x] Phase 3 - Application (Spring Boot + Postgres + SQS worker)
 - [x] Phase 4 - CI/CD: GitHub Actions builds and pushes the image to ECR (deploy is still manual; approval gate and prod promotion are planned)
 - [x] Phase 5 - Secrets management (SSM Parameter Store + Kubernetes Secrets)
-- [ ] Phase 6 - Observability (app dashboard done; server metrics and alerting in progress)
+- [x] Phase 6 - Observability (Prometheus, Grafana, node-exporter, alert rules)
 - [ ] Phase 7 - Cost controls (budget alert, auto-shutdown)
 - [ ] Phase 8 - Final polish (diagram, evidence, LinkedIn post)
 
 ## Monitoring
 
-Prometheus scrapes the app's metrics and Grafana shows them on an OrderFlow dashboard that is loaded from a file in this repo, so it comes back after every restart.
+Prometheus scrapes the app and the server. Grafana shows them on an OrderFlow dashboard that is loaded from a file in this repo, so it comes back after every restart.
 
 ![OrderFlow Grafana dashboard](docs/grafana-dashboard.png)
+
+Three alert rules watch for the app being down, low server memory, and a nearly full disk. The app-down rule was tested by switching the app off on purpose:
+
+![Alert firing](docs/alert-firing.png)
+
+Alerts currently show inside Grafana only. Sending them to email or Slack is planned.
 
 ## Tech stack
 
